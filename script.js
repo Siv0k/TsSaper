@@ -2,7 +2,7 @@ function getBoardSize() {
     var _a;
     var gameBoard = [];
     var heightInputElement = document.getElementById("GameBoardHight");
-    var widthInputElement = document.getElementById("GameBoardWidth");
+    var widthInputElement = document.getElementById("GameBoardWidht");
     var boardSizeHight = +heightInputElement.value;
     var boardSizeWidth = +widthInputElement.value;
     var buttons = Array.from(document.querySelectorAll("div > button"));
@@ -14,6 +14,9 @@ function getBoardSize() {
     var minaPositionArray = minaPosition(totalMines, gameBoard.length);
     var gameBoardElement = document.getElementById("GameBoard");
     for (var i = 0; i < gameBoard.length; i++) {
+        if (i % boardSizeWidth === 0) {
+            gameBoardElement.appendChild(document.createElement("br"));
+        }
         var button = document.createElement("button");
         gameBoard[i] = { button: button, mina: minaPositionArray.includes(i) };
         gameBoardElement.appendChild(gameBoard[i].button);

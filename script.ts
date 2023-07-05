@@ -5,7 +5,7 @@ function getBoardSize() {
     }
     const gameBoard: FillGameBoard[] = [];
     const heightInputElement = document.getElementById("GameBoardHight") as HTMLInputElement;
-    const widthInputElement = document.getElementById("GameBoardWidth") as HTMLInputElement;
+    const widthInputElement = document.getElementById("GameBoardWidht") as HTMLInputElement;
     const boardSizeHight: number = +heightInputElement.value;
     const boardSizeWidth: number = +widthInputElement.value;
 
@@ -22,6 +22,9 @@ function getBoardSize() {
     const gameBoardElement = document.getElementById("GameBoard") as HTMLDivElement;
 
     for (let i = 0; i < gameBoard.length; i++) {
+        if (i % boardSizeWidth === 0) {
+            gameBoardElement.appendChild(document.createElement("br"));
+        }
         const button = document.createElement("button");
         gameBoard [i] = { button: button, mina: minaPositionArray.includes(i) };
         gameBoardElement.appendChild(gameBoard[i].button);
