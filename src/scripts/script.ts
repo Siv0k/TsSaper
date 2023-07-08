@@ -1,8 +1,4 @@
 function getBoardSize() {
-    interface FillGameBoard {
-        button: any;
-        mina: boolean;
-    }
     const gameBoard: FillGameBoard[] = [];
     const heightInputElement = document.getElementById("GameBoardHight") as HTMLInputElement;
     const widthInputElement = document.getElementById("GameBoardWidht") as HTMLInputElement;
@@ -65,5 +61,6 @@ function minaPosition(totalMines: number, length: number) {
 }
 
 const sumbit = document.getElementById('Sumbit');
-if (sumbit)
-sumbit.addEventListener('click', getBoardSize);
+if (sumbit) {
+    sumbit.addEventListener('click', getBoardSize);
+}
