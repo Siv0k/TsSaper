@@ -1,12 +1,28 @@
 {
   "devDependencies": {
     "@types/node": "^20.3.3",
-    "typescript": "^5.1.6"
+    "typescript": "^5.1.6",
+    "webpack": "^5.88.1",
+    "webpack-cli": "^5.1.4",
+    "webpack-dev-server": "^4.15.1"
   },
   "compilerOptions": {
     "lib": [
       "ES2015",
       "DOM"
     ]
-  }
+  },
+  "name": "tssaper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack serve",
+    "build-dev": "webpack",
+    "build-prod": "webpack --node-env production",
+    "clear": "rd /s /q dist/"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
