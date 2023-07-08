@@ -1,3 +1,5 @@
+const FillGameBoard = require("../types/types");
+
 function getBoardSize() {
     const gameBoard: FillGameBoard[] = [];
     const heightInputElement = document.getElementById("GameBoardHight") as HTMLInputElement;
