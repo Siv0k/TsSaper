@@ -1,4 +1,6 @@
-const FillGameBoard = require("../types/types");
+import '../index.html';
+import '../styles/style.css';
+import { FillGameBoard } from '../types/types';
 
 function getBoardSize() {
     const gameBoard: FillGameBoard[] = [];
