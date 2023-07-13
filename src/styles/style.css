@@ -2,6 +2,12 @@ html {
     background-color: #c2eae9;
 }
 
+#GameBoard {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 auto;
+}
+
 button {
     background-color: #ffffff;
     cursor: pointer;
