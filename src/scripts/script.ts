@@ -23,7 +23,7 @@ function getBoardSize() {
         const button = document.createElement("button");
         gameBoard [i] = { button: button, mina: minaPositionArray.includes(i), mineCount: 0 };
         gameBoardElement.appendChild(gameBoard[i].button);
-        gameBoard[i].button.classList.add(gameBoard[i].mina ? "mina" : "no-mina");
+        // gameBoard[i].button.classList.add(gameBoard[i].mina ? "mina" : "no-mina");
         let mineCount = 0;
         const row = Math.floor(i / boardSizeWidth);
         const col = i % boardSizeWidth;
@@ -59,8 +59,9 @@ function getBoardSize() {
             } else {
                 if (mineCount > 0) {
                     gameBoard[i].button.innerText = mineCount.toString();
+                    gameBoard[i].button.classList.add('clicked')
                 } else {
-                    gameBoard[i].button.style.backgroundColor = "green";     
+                    gameBoard[i].button.classList.add('clicked')   
                     const processed = new Set<number>();
                     openEmptyNeighbors(i, gameBoard, boardSizeWidth, boardSizeHight, processed);
                 }
@@ -95,9 +96,11 @@ function openEmptyNeighbors(index: number, gameBoard: FillGameBoard[], boardSize
             const currentCell = gameBoard[neighborIndex];
             if (!currentCell.mina && !currentCell.button.innerText && !processed.has(neighborIndex)) {
                 processed.add(neighborIndex);
-                currentCell.button.innerText = currentCell.mineCount.toString();
+                currentCell.button.innerText = currentCell.mineCount > 0 ? currentCell.mineCount.toString() : '';
+                currentCell.button.classList.add('clicked');
                 if (currentCell.mineCount === 0) {
                     openEmptyNeighbors(neighborIndex, gameBoard, boardSizeWidth, boardSizeHeight, processed); 
+                    currentCell.button.classList.add('clicked');
                 }
             }
         }
