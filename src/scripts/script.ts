@@ -5,8 +5,15 @@ import { FillGameBoard } from '../types/types';
 function getBoardSize() {
     const heightInputElement = document.getElementById("GameBoardHeight") as HTMLInputElement;
     const widthInputElement = document.getElementById("GameBoardWidth") as HTMLInputElement;
-    const boardSizeHeight: number = +heightInputElement.value;
-    const boardSizeWidth: number = +widthInputElement.value;
+    const boardSizeHeight = Math.round(Number(heightInputElement.value));
+    const boardSizeWidth = Math.round(Number(widthInputElement.value));
+    const error = boardSizeHeight <= 0 || boardSizeWidth <= 0;
+
+    if (error) {
+        alert("Некорректные значения для ширины и/или длины поля");
+    return;
+    }
+    
     const gameBoardElement = document.getElementById("GameBoard") as HTMLDivElement;
     const totalMines = getCountMina(boardSizeHeight, boardSizeWidth);
   
@@ -40,6 +47,7 @@ function createGameBoard(boardSizeHeight: number, boardSizeWidth: number, totalM
     const mineCount = countNeighborMines(neighbors, boardSizeHeight, boardSizeWidth, minaPositionArray);
 
     const cell: FillGameBoard = { button, mina: minaPositionArray.includes(i), mineCount };
+    cell.button.classList.add(cell.mina ? 'mina' : 'no-mina')
     gameBoard.push(cell);
   }
 
@@ -49,17 +57,17 @@ function createGameBoard(boardSizeHeight: number, boardSizeWidth: number, totalM
 function displayGameBoard(gameBoard: FillGameBoard[], gameBoardElement: HTMLDivElement, boardSizeWidth: number) {
   gameBoardElement.style.width = `${boardSizeWidth * 50}px`;
 
-  for (const cell of gameBoard) {
-    gameBoardElement.appendChild(cell.button);
-  }
+  gameBoard.forEach(cell => gameBoardElement.appendChild(cell.button));
 }
 
 function addClickHandlers(gameBoard: FillGameBoard[], boardSizeWidth: number, boardSizeHeight: number) {
+    const gameBoardElement = document.getElementById("GameBoard") as HTMLDivElement;
+    
   for (let i = 0; i < gameBoard.length; i++) {
     const cell = gameBoard[i];
-
     cell.button.addEventListener("click", () => {
       if (cell.mina) {
+        cell.button.innerText = '💣';
         gameOver();
       } else {
         if (cell.mineCount > 0) {
@@ -71,6 +79,10 @@ function addClickHandlers(gameBoard: FillGameBoard[], boardSizeWidth: number, bo
           openEmptyNeighbors(i, gameBoard, boardSizeWidth, boardSizeHeight, visited); 
         }
       }
+        const win = gameBoardElement.querySelectorAll('button.clicked').length;
+        if (win === gameBoard.length - getCountMina(boardSizeHeight, boardSizeWidth)) {
+            gameWin();
+        }
     });
 
     cell.button.addEventListener('contextmenu', (event) => {
@@ -79,7 +91,6 @@ function addClickHandlers(gameBoard: FillGameBoard[], boardSizeWidth: number, bo
     });
   }
 }
-
 
 function openEmptyNeighbors(index: number, gameBoard: FillGameBoard[], boardSizeWidth: number, boardSizeHeight: number, visited: Set<number>) {
   const row = Math.floor(index / boardSizeWidth);
@@ -133,15 +144,7 @@ function isValidCell(row: number, col: number, boardSizeWidth: number, boardSize
 
 function getCountMina(boardSizeHeight: number, boardSizeWidth: number): number {
   const length = boardSizeHeight * boardSizeWidth;
-  const ranges = [
-    { min: 25, max: 36, count: 4 },
-    { min: 36, max: 49, count: 6 },
-    { min: 49, max: 64, count: 9 },
-    { min: 64, max: 81, count: 10 },
-    { min: 81, max: 100, count: 12 },
-    { min: 100, max: 121, count: 16 }
-  ];
-  const { count } = ranges.find(range => length >= range.min && length < range.max) || { count: 0 };
+  const count = Math.floor(length * 0.15);
   return count;
 }
 
@@ -159,6 +162,11 @@ function getRandomMinaPositions(boardSize: number, totalMines: number): number[]
 function gameOver() {
   alert("ТЫ ПРОИГРАЛ!");
   location.reload();
+}
+
+function gameWin() {
+    alert("Вы выиграли!");
+    location.reload();
 }
 
 const submit = document.getElementById('Submit');
