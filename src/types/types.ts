@@ -1,5 +1,5 @@
 export interface FillGameBoard {
-    button: any;
+    button: HTMLButtonElement;
     mina: boolean;
     mineCount: number;
 }
