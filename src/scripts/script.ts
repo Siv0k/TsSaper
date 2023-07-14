@@ -75,8 +75,7 @@ function addClickHandlers(gameBoard: FillGameBoard[], boardSizeWidth: number, bo
           cell.button.classList.add('clicked');
         } else {
           cell.button.classList.add('clicked');
-          const visited = new Set<number>(); 
-          openEmptyNeighbors(i, gameBoard, boardSizeWidth, boardSizeHeight, visited); 
+          openEmptyNeighbors(i, gameBoard, boardSizeWidth, boardSizeHeight); 
         }
       }
         const win = gameBoardElement.querySelectorAll('button.clicked').length;
@@ -92,40 +91,46 @@ function addClickHandlers(gameBoard: FillGameBoard[], boardSizeWidth: number, bo
   }
 }
 
-function openEmptyNeighbors(index: number, gameBoard: FillGameBoard[], boardSizeWidth: number, boardSizeHeight: number, visited: Set<number>) {
-  const row = Math.floor(index / boardSizeWidth);
-  const col = index % boardSizeWidth;
-  const neighbors = [
-    { row: row - 1, col: col - 1 },
-    { row: row - 1, col },
-    { row: row - 1, col: col + 1 },
-    { row, col: col - 1 },
-    { row, col: col + 1 },
-    { row: row + 1, col: col - 1 },
-    { row: row + 1, col },
-    { row: row + 1, col: col + 1 }
-  ];    
+function openEmptyNeighbors(index: number, gameBoard: FillGameBoard[], boardSizeWidth: number, boardSizeHeight: number) {
+  const stack: number[] = []; 
+  const visited = new Set<number>();
+  stack.push(index); 
 
-  for (const neighbor of neighbors) {
-    const { row, col } = neighbor;
-    if (isValidCell(row, col, boardSizeWidth, boardSizeHeight)) {
-      const neighborIndex = row * boardSizeWidth + col;
-      if (visited.has(neighborIndex)) {
-        continue;
-      }
-      visited.add(neighborIndex);
-      const neighborCell = gameBoard[neighborIndex];
-      if (!neighborCell.mina && !neighborCell.button.innerText) {
-        neighborCell.button.innerText = neighborCell.mineCount > 0 ? neighborCell.mineCount.toString() : '';
-        neighborCell.button.classList.add('clicked');
-        if (neighborCell.mineCount === 0) {
-          openEmptyNeighbors(neighborIndex, gameBoard, boardSizeWidth, boardSizeHeight, visited);
+  while (stack.length > 0) {
+    const currentIndex = stack.pop(); 
+    const row = Math.floor(currentIndex / boardSizeWidth);
+    const col = currentIndex % boardSizeWidth;
+    const neighbors = [
+      { row: row - 1, col: col - 1 },
+      { row: row - 1, col },
+      { row: row - 1, col: col + 1 },
+      { row, col: col - 1 },
+      { row, col: col + 1 },
+      { row: row + 1, col: col - 1 },
+      { row: row + 1, col },
+      { row: row + 1, col: col + 1 }
+    ];
+
+    for (const neighbor of neighbors) {
+      const { row, col } = neighbor;
+      if (isValidCell(row, col, boardSizeWidth, boardSizeHeight)) {
+        const neighborIndex = row * boardSizeWidth + col;
+        if (visited.has(neighborIndex)) {
+          continue;
+        }
+        visited.add(neighborIndex);
+        const neighborCell = gameBoard[neighborIndex];
+        if (!neighborCell.mina && !neighborCell.button.innerText) {
+          neighborCell.button.innerText = neighborCell.mineCount > 0 ? neighborCell.mineCount.toString() : '';
+          neighborCell.button.classList.add('clicked');
+          if (neighborCell.mineCount === 0) {
+            stack.push(neighborIndex); 
+          }
         }
       }
     }
   }
 }
-
 
 function countNeighborMines(neighbors: { row: number, col: number }[], boardSizeHeight: number, boardSizeWidth: number, minaPositions: number[]): number {
   let mineCount = 0;
