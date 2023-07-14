@@ -61,15 +61,9 @@ function displayGameBoard(gameBoard: FillGameBoard[], gameBoardElement: HTMLDivE
 }
 
 function addClickHandlers(gameBoard: FillGameBoard[], boardSizeWidth: number, boardSizeHeight: number) {
-    const gameBoardElement = document.getElementById("GameBoard") as HTMLDivElement;
-    
   for (let i = 0; i < gameBoard.length; i++) {
     const cell = gameBoard[i];
     cell.button.addEventListener("click", () => {
-      if (cell.mina) {
-        cell.button.innerText = '💣';
-        gameOver();
-      } else {
         if (cell.mineCount > 0) {
           cell.button.innerText = cell.mineCount.toString();
           cell.button.classList.add('clicked');
@@ -77,11 +71,8 @@ function addClickHandlers(gameBoard: FillGameBoard[], boardSizeWidth: number, bo
           cell.button.classList.add('clicked');
           openEmptyNeighbors(i, gameBoard, boardSizeWidth, boardSizeHeight); 
         }
-      }
-        const win = gameBoardElement.querySelectorAll('button.clicked').length;
-        if (win === gameBoard.length - getCountMina(boardSizeHeight, boardSizeWidth)) {
-            gameWin();
-        }
+        gameOver(gameBoard, i);
+        gameWin(gameBoard, boardSizeWidth, boardSizeHeight);
     });
 
     cell.button.addEventListener('contextmenu', (event) => {
@@ -164,14 +155,22 @@ function getRandomMinaPositions(boardSize: number, totalMines: number): number[]
   return minaPositions;
 }
 
-function gameOver() {
+function gameOver(gameBoard: FillGameBoard[], index: number) {
+  const cell = gameBoard[index];
+  if (cell.mina) {
+  cell.button.innerText = '💣';
   alert("ТЫ ПРОИГРАЛ!");
   location.reload();
+  }
 }
 
-function gameWin() {
-    alert("Вы выиграли!");
-    location.reload();
+function gameWin(gameBoard: FillGameBoard[], boardSizeWidth: number, boardSizeHeight: number) {
+    const gameBoardElement = document.getElementById("GameBoard") as HTMLDivElement;
+    const win = gameBoardElement.querySelectorAll('button.clicked').length;
+    if (win === gameBoard.length - getCountMina(boardSizeHeight, boardSizeWidth)) {
+        alert("Вы выиграли!");
+        location.reload();
+    }
 }
 
 const submit = document.getElementById('Submit');
