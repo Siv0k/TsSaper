@@ -5,7 +5,7 @@ import { gameOver, gameWin } from '../utilits/resultFunctions';
 import { isValidCell } from '../utilits/validFunction';
 import { countNeighborMines, getCountMina, getRandomMinaPositions } from '../utilits/counters';
 
-function boardInit() {
+function fieldInit() {
     const heightInputElement = document.getElementById("GameBoardHeight") as HTMLInputElement;
     const widthInputElement = document.getElementById("GameBoardWidth") as HTMLInputElement;
     const boardSizeHeight = Math.round(Number(heightInputElement.value));
@@ -25,7 +25,7 @@ function boardInit() {
   
     const gameBoard = createGameBoard(boardSizeHeight, boardSizeWidth, totalMines);
     displayGameBoard(gameBoard, gameBoardElement, boardSizeWidth);
-    addClickHandlers(gameBoard, boardSizeWidth, boardSizeHeight);
+    addClickHandlers(gameBoard, boardSizeWidth, boardSizeHeight, totalMines);
     return boardSizeHeight;
   }
 
@@ -64,7 +64,7 @@ function displayGameBoard(gameBoard: FillGameBoard[], gameBoardElement: HTMLDivE
   gameBoard.forEach(cell => gameBoardElement.appendChild(cell.button));
 }
 
-function addClickHandlers(gameBoard: FillGameBoard[], boardSizeWidth: number, boardSizeHeight: number) {
+function addClickHandlers(gameBoard: FillGameBoard[], boardSizeWidth: number, boardSizeHeight: number, totalMines: number) {
   for (let i = 0; i < gameBoard.length; i++) {
     const cell = gameBoard[i];
     cell.button.addEventListener("click", () => {
@@ -75,8 +75,10 @@ function addClickHandlers(gameBoard: FillGameBoard[], boardSizeWidth: number, bo
           cell.button.classList.add('clicked');
           openEmptyNeighbors(i, gameBoard, boardSizeWidth, boardSizeHeight); 
         }
-        gameOver(gameBoard, i);
-        gameWin(gameBoard, boardSizeWidth, boardSizeHeight);
+        if (cell.mina) {
+        gameOver(cell.button);
+        }
+        gameWin(gameBoard, totalMines);
     });
 
     cell.button.addEventListener('contextmenu', (event) => {
@@ -129,5 +131,5 @@ function openEmptyNeighbors(index: number, gameBoard: FillGameBoard[], boardSize
 
 const submit = document.getElementById('Submit');
 if (submit) {
-  submit.addEventListener('click', boardInit);
+  submit.addEventListener('click', fieldInit);
 }
