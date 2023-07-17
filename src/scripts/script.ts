@@ -59,7 +59,8 @@ function createGameBoard(boardSizeHeight: number, boardSizeWidth: number, totalM
 }
 
 function displayGameBoard(gameBoard: FillGameBoard[], gameBoardElement: HTMLDivElement, boardSizeWidth: number) {
-  gameBoardElement.style.width = `${boardSizeWidth * 50}px`;
+  const cellSize = 50;
+  gameBoardElement.style.width = `${boardSizeWidth * cellSize}px`;
   gameBoard.forEach(cell => gameBoardElement.appendChild(cell.button));
 }
 
