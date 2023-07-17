@@ -1,15 +1,18 @@
 import '../index.html';
 import '../styles/style.css';
 import { FillGameBoard } from '../types/types';
+import { gameOver, gameWin } from '../utilits/resultFunctions';
+import { isValidCell } from '../utilits/validFunction';
+import { countNeighborMines, getCountMina, getRandomMinaPositions } from '../utilits/counters';
 
-function getBoardSize() {
+function boardInit() {
     const heightInputElement = document.getElementById("GameBoardHeight") as HTMLInputElement;
     const widthInputElement = document.getElementById("GameBoardWidth") as HTMLInputElement;
     const boardSizeHeight = Math.round(Number(heightInputElement.value));
     const boardSizeWidth = Math.round(Number(widthInputElement.value));
-    const error = boardSizeHeight <= 0 || boardSizeWidth <= 0;
+    const isCorrectBoardSize = boardSizeHeight <= 0 || boardSizeWidth <= 0;
 
-    if (error) {
+    if (isCorrectBoardSize) {
         alert("Некорректные значения для ширины и/или длины поля");
     return;
     }
@@ -23,6 +26,7 @@ function getBoardSize() {
     const gameBoard = createGameBoard(boardSizeHeight, boardSizeWidth, totalMines);
     displayGameBoard(gameBoard, gameBoardElement, boardSizeWidth);
     addClickHandlers(gameBoard, boardSizeWidth, boardSizeHeight);
+    return boardSizeHeight;
   }
 
 function createGameBoard(boardSizeHeight: number, boardSizeWidth: number, totalMines: number): FillGameBoard[] {
@@ -56,7 +60,6 @@ function createGameBoard(boardSizeHeight: number, boardSizeWidth: number, totalM
 
 function displayGameBoard(gameBoard: FillGameBoard[], gameBoardElement: HTMLDivElement, boardSizeWidth: number) {
   gameBoardElement.style.width = `${boardSizeWidth * 50}px`;
-
   gameBoard.forEach(cell => gameBoardElement.appendChild(cell.button));
 }
 
@@ -123,57 +126,7 @@ function openEmptyNeighbors(index: number, gameBoard: FillGameBoard[], boardSize
   }
 }
 
-function countNeighborMines(neighbors: { row: number, col: number }[], boardSizeHeight: number, boardSizeWidth: number, minaPositions: number[]): number {
-  let mineCount = 0;
-  for (const neighbor of neighbors) {
-    const { row, col } = neighbor;
-    if (isValidCell(row, col, boardSizeWidth, boardSizeHeight) && minaPositions.includes(row * boardSizeWidth + col)) {
-      mineCount++;
-    }
-  }
-  return mineCount;
-}
-
-function isValidCell(row: number, col: number, boardSizeWidth: number, boardSizeHeight: number): boolean {
-  return row >= 0 && row < boardSizeHeight && col >= 0 && col < boardSizeWidth;
-}
-
-function getCountMina(boardSizeHeight: number, boardSizeWidth: number): number {
-  const length = boardSizeHeight * boardSizeWidth;
-  const count = Math.floor(length * 0.15);
-  return count;
-}
-
-function getRandomMinaPositions(boardSize: number, totalMines: number): number[] {
-  const minaPositions: number[] = [];
-  while (minaPositions.length < totalMines) {
-    const randomPosition = Math.floor(Math.random() * boardSize);
-    if (!minaPositions.includes(randomPosition)) {
-      minaPositions.push(randomPosition);
-    }
-  }
-  return minaPositions;
-}
-
-function gameOver(gameBoard: FillGameBoard[], index: number) {
-  const cell = gameBoard[index];
-  if (cell.mina) {
-  cell.button.innerText = '💣';
-  alert("ТЫ ПРОИГРАЛ!");
-  location.reload();
-  }
-}
-
-function gameWin(gameBoard: FillGameBoard[], boardSizeWidth: number, boardSizeHeight: number) {
-    const gameBoardElement = document.getElementById("GameBoard") as HTMLDivElement;
-    const win = gameBoardElement.querySelectorAll('button.clicked').length;
-    if (win === gameBoard.length - getCountMina(boardSizeHeight, boardSizeWidth)) {
-        alert("Вы выиграли!");
-        location.reload();
-    }
-}
-
 const submit = document.getElementById('Submit');
 if (submit) {
-  submit.addEventListener('click', getBoardSize);
+  submit.addEventListener('click', boardInit);
 }
