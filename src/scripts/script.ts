@@ -76,14 +76,21 @@ function addClickHandlers(gameBoard: FillGameBoard[], boardSizeWidth: number, bo
           openEmptyNeighbors(i, gameBoard, boardSizeWidth, boardSizeHeight); 
         }
         if (cell.mina) {
-        gameOver(cell.button);
+        gameOver(gameBoard);
         }
         gameWin(gameBoard, totalMines);
     });
 
-    cell.button.addEventListener('contextmenu', (event) => {
+    cell.button.addEventListener('contextmenu', (event) => { 
       event.preventDefault();
-      cell.button.innerText = '🚩';
+      if (cell.button.classList.contains('clicked')) {
+        return;
+      } else if (cell.button.innerText === '🚩') {
+        cell.button.innerText = '';
+      } else {
+        cell.button.innerText = '🚩';
+      }
+      gameWin(gameBoard, totalMines);
     });
   }
 }
