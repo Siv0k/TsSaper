@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Saper</title>
-</head>
-<body>
+  </head>
+  <body>
     <form>
-        <label for="GameBoardWidht">Введите ширину поля</label>
-        <input type="number" id="GameBoardWidth">
-        <label for="GameBoardHight">Введите высоту поля</label>
-        <input type="number" id="GameBoardHeight">
-        <button type="button" id="Submit">save</button>
+      <label for="GameBoardWidht">Введите ширину поля</label>
+      <input type="number" id="GameBoardWidth" />
+      <label for="GameBoardHight">Введите высоту поля</label>
+      <input type="number" id="GameBoardHeight" />
+      <button type="button" id="Submit">Начать</button>
     </form>
-    <div id="GameBoard">
+    <div class="restartGameContainer">
+      <p id="messageContainer"></p>
+      <button type="button" id="restartButton">Начать заново</button>
     </div>
-</body>
+    <div id="GameBoard"></div>
+  </body>
 </html>
