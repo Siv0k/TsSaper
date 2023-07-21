@@ -8,6 +8,7 @@ import {
   getCountMina,
   getRandomMinaPositions,
 } from "../utilits/counters";
+import { neighbor } from "../utilits/counters";
 
 function fieldInit() {
   const heightInputElement = document.getElementById(
@@ -60,20 +61,10 @@ function createGameBoard(
     const button = document.createElement("button");
     const row = Math.floor(i / boardSizeWidth);
     const col = i % boardSizeWidth;
-    const neighbors = [];
-
-    for (let r = -1; r <= 1; r++) {
-      for (let c = -1; c <= 1; c++) {
-        if (r === 0 && c === 0) continue;
-        const neighborRow = row + r;
-        const neighborCol = col + c;
-        neighbors.push({ row: neighborRow, col: neighborCol });
-      }
-    }
+    const neighbors = neighbor(row, col, boardSizeWidth, boardSizeHeight);
 
     const mineCount = countNeighborMines(
       neighbors,
-      boardSizeHeight,
       boardSizeWidth,
       minaPositionArray
     );
@@ -83,7 +74,7 @@ function createGameBoard(
       mina: minaPositionArray.includes(i),
       mineCount,
     };
-    cell.button.classList.add(cell.mina ? "mina" : "no-mina");
+    // cell.button.classList.add(cell.mina ? "mina" : "no-mina");
     gameBoard.push(cell);
   }
 
@@ -133,6 +124,33 @@ function addClickHandlers(
       }
       gameWin(gameBoard, totalMines);
     });
+
+    cell.button.addEventListener("mousedown", (event) => {
+      event.preventDefault();
+      if (event.button === 1) {
+        const row = Math.floor(i / boardSizeWidth);
+        const col = i % boardSizeWidth;
+        const neighbors = neighbor(row, col, boardSizeWidth, boardSizeHeight);
+        for (const neighbor of neighbors) {
+          const { row, col } = neighbor;
+          const neighborIndex = row * boardSizeWidth + col;
+          const neighborCell = gameBoard[neighborIndex];
+          if (!neighborCell.button.classList.contains("clicked")) {
+            neighborCell.button.classList.add("highlighted");
+          }
+        }
+      }
+    });
+
+    cell.button.addEventListener("mouseup", (event) => {
+      event.preventDefault();
+      if (event.button === 1) {
+        const highlightedCells = document.querySelectorAll(".highlighted");
+        highlightedCells.forEach((highlightedCell) => {
+          highlightedCell.classList.remove("highlighted");
+        });
+      }
+    });
   }
 }
 
@@ -149,30 +167,19 @@ function openEmptyNeighbors(
     const currentIndex = stack.pop();
     const row = Math.floor(currentIndex / boardSizeWidth);
     const col = currentIndex % boardSizeWidth;
+    const neighbors = neighbor(row, col, boardSizeWidth, boardSizeHeight);
 
-    for (let r = -1; r <= 1; r++) {
-      for (let c = -1; c <= 1; c++) {
-        if (r === 0 && c === 0) continue;
-        const neighborRow = row + r;
-        const neighborCol = col + c;
-
-        if (
-          isValidCell(neighborRow, neighborCol, boardSizeWidth, boardSizeHeight)
-        ) {
-          const neighbordIndex = neighborRow * boardSizeWidth + neighborCol;
-          if (visited.has(neighbordIndex)) continue;
-          visited.add(neighbordIndex);
-          const neighborCell = gameBoard[neighbordIndex];
-          if (!neighborCell.mina && !neighborCell.button.innerText) {
-            neighborCell.button.innerText =
-              neighborCell.mineCount > 0
-                ? neighborCell.mineCount.toString()
-                : "";
-            neighborCell.button.classList.add("clicked");
-            if (neighborCell.mineCount === 0) {
-              stack.push(neighbordIndex);
-            }
-          }
+    for (const { row: neighborRow, col: neighborCol } of neighbors) {
+      const neighbordIndex = neighborRow * boardSizeWidth + neighborCol;
+      if (visited.has(neighbordIndex)) continue;
+      visited.add(neighbordIndex);
+      const neighborCell = gameBoard[neighbordIndex];
+      if (!neighborCell.mina && !neighborCell.button.innerText) {
+        neighborCell.button.innerText =
+          neighborCell.mineCount > 0 ? neighborCell.mineCount.toString() : "";
+        neighborCell.button.classList.add("clicked");
+        if (neighborCell.mineCount === 0) {
+          stack.push(neighbordIndex);
         }
       }
     }

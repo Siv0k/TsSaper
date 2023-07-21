@@ -3,7 +3,6 @@ import { neighbors } from "../types/types";
 
 export function countNeighborMines(
   neighbors: neighbors[],
-  boardSizeHeight: number,
   boardSizeWidth: number,
   minaPositions: number[]
 ): number {
@@ -11,7 +10,6 @@ export function countNeighborMines(
   for (const neighbor of neighbors) {
     const { row, col } = neighbor;
     if (
-      isValidCell(row, col, boardSizeWidth, boardSizeHeight) &&
       minaPositions.includes(row * boardSizeWidth + col)
     ) {
       mineCount++;
@@ -41,4 +39,24 @@ export function getRandomMinaPositions(
     }
   }
   return minaPositions;
+}
+
+export function neighbor(
+  row: number,
+  col: number,
+  boardSizeWidth: number,
+  boardSizeHeight: number
+) {
+  const neighbors = [];
+  for (let r = -1; r <= 1; r++) {
+    for (let c = -1; c <= 1; c++) {
+      if (r === 0 && c === 0) continue;
+      const neighborRow = row + r;
+      const neighborCol = col + c;
+      if (isValidCell(neighborRow, neighborCol, boardSizeWidth, boardSizeHeight)) {
+        neighbors.push({ row: neighborRow, col: neighborCol });
+      }
+    }
+  }
+  return neighbors;
 }

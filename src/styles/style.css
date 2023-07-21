@@ -108,3 +108,10 @@ button.clicked {
   left: 50%;
   transform: translateX(-50%);
 }
+
+
+.highlighted {
+  background-color: #f9f966;
+  box-shadow: 0 0 8px 3px rgba(255, 255, 0, 0.7); 
+  transition: box-shadow 0.2s ease-in-out; 
+}
