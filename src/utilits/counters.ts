@@ -9,9 +9,7 @@ export function countNeighborMines(
   let mineCount = 0;
   for (const neighbor of neighbors) {
     const { row, col } = neighbor;
-    if (
-      minaPositions.includes(row * boardSizeWidth + col)
-    ) {
+    if (minaPositions.includes(row * boardSizeWidth + col)) {
       mineCount++;
     }
   }
@@ -53,7 +51,9 @@ export function neighbor(
       if (r === 0 && c === 0) continue;
       const neighborRow = row + r;
       const neighborCol = col + c;
-      if (isValidCell(neighborRow, neighborCol, boardSizeWidth, boardSizeHeight)) {
+      if (
+        isValidCell(neighborRow, neighborCol, boardSizeWidth, boardSizeHeight)
+      ) {
         neighbors.push({ row: neighborRow, col: neighborCol });
       }
     }
