@@ -3,3 +3,9 @@ export interface FillGameBoard {
   mina: boolean;
   mineCount: number;
 }
+
+export interface neighbors {
+  row: number;
+  col: number;
+}
+[];

@@ -19,9 +19,9 @@ function fieldInit() {
   const boardSizeHeight = Math.round(Number(heightInputElement.value));
   const boardSizeWidth = Math.round(Number(widthInputElement.value));
   const formElement = document.querySelector("form") as HTMLFormElement;
-  const isCorrectBoardSize = boardSizeHeight <= 0 || boardSizeWidth <= 0;
+  const isCorrectBoardSize = boardSizeHeight <= 3 || boardSizeWidth <= 3;
 
-  formElement.style.display = "none";
+  formElement.style.display = isCorrectBoardSize ? "block" : "none";
 
   if (isCorrectBoardSize) {
     alert("Некорректные значения для ширины и/или длины поля");
@@ -60,16 +60,16 @@ function createGameBoard(
     const button = document.createElement("button");
     const row = Math.floor(i / boardSizeWidth);
     const col = i % boardSizeWidth;
-    const neighbors = [
-      { row: row - 1, col: col - 1 },
-      { row: row - 1, col },
-      { row: row - 1, col: col + 1 },
-      { row, col: col - 1 },
-      { row, col: col + 1 },
-      { row: row + 1, col: col - 1 },
-      { row: row + 1, col },
-      { row: row + 1, col: col + 1 },
-    ];
+    const neighbors = [];
+
+    for (let r = -1; r <= 1; r++) {
+      for (let c = -1; c <= 1; c++) {
+        if (r === 0 && c === 0) continue;
+        const neighborRow = row + r;
+        const neighborCol = col + c;
+        neighbors.push({ row: neighborRow, col: neighborCol });
+      }
+    }
 
     const mineCount = countNeighborMines(
       neighbors,
@@ -142,40 +142,36 @@ function openEmptyNeighbors(
   boardSizeWidth: number,
   boardSizeHeight: number
 ) {
-  const stack: number[] = [];
+  const stack: number[] = [index];
   const visited = new Set<number>();
-  stack.push(index);
 
   while (stack.length > 0) {
     const currentIndex = stack.pop();
     const row = Math.floor(currentIndex / boardSizeWidth);
     const col = currentIndex % boardSizeWidth;
-    const neighbors = [
-      { row: row - 1, col: col - 1 },
-      { row: row - 1, col },
-      { row: row - 1, col: col + 1 },
-      { row, col: col - 1 },
-      { row, col: col + 1 },
-      { row: row + 1, col: col - 1 },
-      { row: row + 1, col },
-      { row: row + 1, col: col + 1 },
-    ];
 
-    for (const neighbor of neighbors) {
-      const { row, col } = neighbor;
-      if (isValidCell(row, col, boardSizeWidth, boardSizeHeight)) {
-        const neighborIndex = row * boardSizeWidth + col;
-        if (visited.has(neighborIndex)) {
-          continue;
-        }
-        visited.add(neighborIndex);
-        const neighborCell = gameBoard[neighborIndex];
-        if (!neighborCell.mina && !neighborCell.button.innerText) {
-          neighborCell.button.innerText =
-            neighborCell.mineCount > 0 ? neighborCell.mineCount.toString() : "";
-          neighborCell.button.classList.add("clicked");
-          if (neighborCell.mineCount === 0) {
-            stack.push(neighborIndex);
+    for (let r = -1; r <= 1; r++) {
+      for (let c = -1; c <= 1; c++) {
+        if (r === 0 && c === 0) continue;
+        const neighborRow = row + r;
+        const neighborCol = col + c;
+
+        if (
+          isValidCell(neighborRow, neighborCol, boardSizeWidth, boardSizeHeight)
+        ) {
+          const neighbordIndex = neighborRow * boardSizeWidth + neighborCol;
+          if (visited.has(neighbordIndex)) continue;
+          visited.add(neighbordIndex);
+          const neighborCell = gameBoard[neighbordIndex];
+          if (!neighborCell.mina && !neighborCell.button.innerText) {
+            neighborCell.button.innerText =
+              neighborCell.mineCount > 0
+                ? neighborCell.mineCount.toString()
+                : "";
+            neighborCell.button.classList.add("clicked");
+            if (neighborCell.mineCount === 0) {
+              stack.push(neighbordIndex);
+            }
           }
         }
       }

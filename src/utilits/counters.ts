@@ -1,7 +1,8 @@
 import { isValidCell } from "../utilits/validFunction";
+import { neighbors } from "../types/types";
 
 export function countNeighborMines(
-  neighbors: { row: number; col: number }[],
+  neighbors: neighbors[],
   boardSizeHeight: number,
   boardSizeWidth: number,
   minaPositions: number[]
